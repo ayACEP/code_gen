@@ -11,14 +11,14 @@
             "windows": {
                 "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron.cmd"
             },
-            "program": "${workspaceRoot}/main.js",
+            "program": "${workspaceRoot}/index.js",
             "protocol": "legacy"
         },
         {
             "type": "node",
             "request": "launch",
             "name": "launch",
-            "program": "${workspaceRoot}/main.js"
+            "program": "${workspaceRoot}/index.js"
         },
         {
             "type": "node",
