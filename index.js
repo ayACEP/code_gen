@@ -7,16 +7,19 @@ const BrowserWindow = electron.BrowserWindow
 const path = require('path')
 const url = require('url')
 
+const Menu = electron.Menu;
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
 
 function createWindow() {
     // Create the browser window.
-    mainWindow = new BrowserWindow({ 
+    mainWindow = new BrowserWindow({
+        title: "code_gen",
         width: 1280, 
         height: 720, 
-        webPreferences: {nodeIntegration: false} 
+        webPreferences: {nodeIntegration: true} 
     })
 
     // and load the index.html of the app.
@@ -36,6 +39,8 @@ function createWindow() {
         // when you should delete the corresponding element.
         mainWindow = null
     })
+
+    // Menu.setApplicationMenu(null)
 }
 
 // This method will be called when Electron has finished

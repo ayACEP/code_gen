@@ -1,10 +1,16 @@
-var Main = react.createClass({
-    render: function() {
-        return <h1>Hello World!</h1>;
-    }
-});
+const React = require("react");
+const ReactDOM = require("react-dom");
+const Nav = require("./nav");
 
-ReactDOM.render(
-    <Main />,
-    document.getElementById('main')
-)
+class Main extends React.Component {
+    render() {
+        return React.createElement(
+            "div",
+            { className: "container-fluid" },
+            React.createElement(Nav, null),
+            React.createElement("div", { id: "module" })
+        );
+    }
+};
+
+ReactDOM.render(React.createElement(Main, null), document.getElementById('main'));
