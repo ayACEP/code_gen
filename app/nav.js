@@ -3,42 +3,35 @@ const React = require("react");
 class Nav extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { name: "123" };
-        this.onLiClick = this.onLiClick.bind(this);
     }
     render() {
         return React.createElement(
             "nav",
-            { id: "nav" },
+            null,
             React.createElement(
                 "ul",
                 { className: "nav nav-tabs nav-justified" },
-                React.createElement(
-                    "li",
-                    { className: this.state.name, onClick: this.onLiClick },
-                    React.createElement(
-                        "a",
-                        { href: "#" },
-                        "1"
-                    )
-                ),
-                React.createElement(
-                    "li",
-                    null,
-                    React.createElement(
-                        "a",
-                        { href: "#", onClick: this.onLiClick },
-                        "2"
-                    )
-                )
+                this.props.modules.map((module, i) => React.createElement(NavItem, { key: i, index: i, name: module }))
             )
         );
     }
-    onLiClick(e) {
-        console.log(e);
-        // e.setAttribute("class", "active");
-        // this.setState({name: "active"});
-    }
 };
+
+class NavItem extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+    render() {
+        return React.createElement(
+            "li",
+            { className: this.props.index == 0 ? "active" : "", role: "presentation" },
+            React.createElement(
+                "a",
+                { href: "#" + this.props.name, "aria-controls": this.props.name, role: "tab", "data-toggle": "tab" },
+                this.props.name
+            )
+        );
+    }
+}
 
 module.exports = Nav;
