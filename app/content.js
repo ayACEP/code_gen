@@ -20,10 +20,9 @@ class ContentItem extends React.Component {
         super(props);
     }
     render() {
-        console.log(this.props.module);
         return React.createElement(
             "div",
-            { role: "tabpanel", className: this.props.index == 0 ? "tab-pane active" : "tab-pane", id: this.props.name },
+            { role: "tabpanel", className: "tab-pane container-fluid " + (this.props.index == 0 ? "active" : ""), id: this.props.name },
             React.createElement(this.props.module, null)
         );
     }
