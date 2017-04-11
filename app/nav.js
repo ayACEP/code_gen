@@ -7,7 +7,7 @@ class Nav extends React.Component {
     render() {
         return React.createElement(
             "nav",
-            null,
+            { style: { marginTop: "20px" } },
             React.createElement(
                 "ul",
                 { className: "nav nav-tabs nav-justified" },

@@ -5,7 +5,7 @@ class Nav extends React.Component {
         super(props);
     }
     render() {
-        return <nav>
+        return <nav style={{marginTop: "20px"}}>
             <ul className="nav nav-tabs nav-justified">
                 {this.props.modules.map((module, i) => <NavItem key={i} index={i} name={module} />)}
             </ul>

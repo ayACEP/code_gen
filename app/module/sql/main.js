@@ -13,21 +13,29 @@ class SQL extends React.Component {
             { className: "row" },
             React.createElement(
                 "div",
-                { className: "col-md-4" },
+                { className: "col-md-5" },
                 React.createElement(
                     "div",
-                    { className: "col-md-12" },
-                    React.createElement(DBConnection, null)
+                    { className: "row" },
+                    React.createElement(
+                        "div",
+                        { className: "col-md-12" },
+                        React.createElement(DBConnection, null)
+                    )
                 ),
                 React.createElement(
                     "div",
-                    { className: "col-md-12" },
-                    React.createElement(JpaEntityGen, null)
+                    { className: "row" },
+                    React.createElement(
+                        "div",
+                        { className: "col-md-12" },
+                        React.createElement(JpaEntityGen, null)
+                    )
                 )
             ),
             React.createElement(
                 "div",
-                { className: "col-md-8" },
+                { className: "col-md-7" },
                 React.createElement(SQLEditor, null)
             )
         );

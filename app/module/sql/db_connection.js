@@ -1,4 +1,5 @@
 const React = require("react");
+const style = require("../../style");
 
 class DBConnection extends React.Component {
     constructor(props) {
@@ -11,7 +12,12 @@ class DBConnection extends React.Component {
             React.createElement(
                 "div",
                 { className: "panel-heading" },
-                "DBConnection"
+                React.createElement(
+                    "label",
+                    { style: style.panelHeadLabel },
+                    React.createElement("input", { type: "checkbox" }),
+                    "\xA0DBConnection"
+                )
             ),
             React.createElement(
                 "div",
