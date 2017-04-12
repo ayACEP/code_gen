@@ -5,6 +5,9 @@ const style = {
     },
     marginTop: {
         marginTop: "20px"
+    },
+    marginBottomZero: {
+        marginBottom: "0px"
     }
 }
 

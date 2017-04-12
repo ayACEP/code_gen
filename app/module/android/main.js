@@ -31,6 +31,7 @@ class Android extends React.Component {
             this.setState({ outputDir: paths[0] });
         }
     }
+    onExecClick() {}
     render() {
         return React.createElement(
             "div",
@@ -166,7 +167,7 @@ class Android extends React.Component {
                 ),
                 React.createElement(
                     "button",
-                    { className: "btn btn-primary center-block", onClick: this.onExecClick, style: { marginTop: "20px" } },
+                    { className: "btn btn-primary center-block", onClick: this.onExecClick, style: style.marginTop },
                     "exec"
                 )
             )

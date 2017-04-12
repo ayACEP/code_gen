@@ -31,6 +31,9 @@ class Android extends React.Component {
             this.setState({outputDir: paths[0]});
         }
     }
+    onExecClick() {
+        
+    }
     render() {
         return <div className="row">
             <div className="col-md-12">
@@ -74,7 +77,7 @@ class Android extends React.Component {
                         </tr>
                     </tbody>
                 </table>
-                <button className="btn btn-primary center-block" onClick={this.onExecClick} style={{marginTop: "20px"}}>exec</button>
+                <button className="btn btn-primary center-block" onClick={this.onExecClick} style={style.marginTop}>exec</button>
             </div>
         </div>;
     }

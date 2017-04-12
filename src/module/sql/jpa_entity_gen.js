@@ -3,17 +3,27 @@ const style = require("../../style");
 const electron = require('electron');
 const remote = electron.remote;
 const shell = electron.shell;
+const pg = require('pg');
+const pgClient = new pg.Client("postgres://developer:bekind5432@localhost:5432/bekind_dev");
 
 class JPAEntityGen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             templetePath: "",
-            outputDir: ""
+            outputDir: "",
+            isGenJPAEntity: true
         };
+        this.onCheckboxChange = this.onCheckboxChange.bind(this);
+        this.onTextChange = this.onTextChange.bind(this);
         this.onTempleteFindClick = this.onTempleteFindClick.bind(this);
         this.onTempleteEditClick = this.onTempleteEditClick.bind(this);
         this.onOutputFindClick = this.onOutputFindClick.bind(this);
+    }
+    onCheckboxChange(e) {
+        this.setState({
+            [e.target.name]: e.target.checked
+        });
     }
     onTempleteFindClick() {
         let paths = remote.dialog.showOpenDialog({
@@ -25,7 +35,9 @@ class JPAEntityGen extends React.Component {
         }
     }
     onTempleteEditClick() {
-        shell.openItem(this.state.templetePath);
+        if (this.state.templetePath != "") {
+            shell.openItem(this.state.templetePath);
+        }
     }
     onOutputFindClick() {
         let paths = remote.dialog.showOpenDialog({
@@ -36,18 +48,23 @@ class JPAEntityGen extends React.Component {
             this.setState({outputDir: paths[0]});
         }
     }
+    onTextChange(e) {
+        this.setState({
+            [e.target.name]: e.target.value
+        });
+    }
     render() {
         return <div className="panel panel-default">
             <div className="panel-heading">
                 <label style={style.panelHeadLabel}>
-                    <input type="checkbox"/>
-                    &nbsp;JPAEntityGen
+                    <input type="checkbox" name="isGenJPAEntity" type="checkbox" onChange={this.onCheckboxChange} checked={this.state.isGenJPAEntity} />
+                    <span>&nbsp;JPAEntityGen</span>
                 </label>
             </div>
             <div className="panel-body">
                 <div className="input-group form-group">
                     <span className="input-group-addon">templete</span>
-                    <input className="form-control" type="text" value={this.state.templetePath} />
+                    <input className="form-control" name="templetePath" type="text" value={this.state.templetePath} onChange={this.onTextChange} />
                     <span className="input-group-btn">
                         <button className="btn btn-primary" onClick={this.onTempleteEditClick}>edit</button>
                         <button className="btn btn-primary" onClick={this.onTempleteFindClick}>find</button>
@@ -55,7 +72,7 @@ class JPAEntityGen extends React.Component {
                 </div>
                 <div className="input-group">
                     <span className="input-group-addon">output</span>
-                    <input className="form-control" type="text" value={this.state.outputDir} />
+                    <input className="form-control" name="outputDir" type="text" value={this.state.outputDir} onChange={this.onTextChange} />
                     <span className="input-group-btn">
                         <button className="btn btn-primary" onClick={this.onOutputFindClick}>find</button>
                     </span>
