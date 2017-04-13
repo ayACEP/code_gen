@@ -31,7 +31,9 @@ class JPAEntityGen extends React.Component {
             defaultPath: this.state.templetePath,
             properties: ['openFile']});
         if (paths != null && paths.length > 0) {
-            this.setState({templetePath: paths[0]});
+            this.setState({
+                templetePath: paths[0]
+            });
         }
     }
     onTempleteEditClick() {
@@ -45,7 +47,9 @@ class JPAEntityGen extends React.Component {
             defaultPath: this.state.outputDir,
             properties: ['openDirectory']});
         if (paths != null && paths.length > 0) {
-            this.setState({outputDir: paths[0]});
+            this.setState({
+                outputDir: paths[0]
+            });
         }
     }
     onTextChange(e) {

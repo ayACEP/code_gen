@@ -1,40 +1,39 @@
 const React = require("react");
 const ReactDOM = require("react-dom");
 const style = require("../../style");
+
 const marginLeft = { marginLeft: "12px" };
 
 class DBConnection extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            targetDB: [],
+            targetDBViews: [],
             autoIncrease: 0
         };
         this.onAddClick = this.onAddClick.bind(this);
         this.onChildRemoveClick = this.onChildRemoveClick.bind(this);
     }
     onAddClick(e) {
-        let newTargetDB = this.state.targetDB;
+        let newTargetDBViews = this.state.targetDBViews;
         let key = this.state.autoIncrease + 1;
-        console.log(key);
-        newTargetDB.push(React.createElement(DB, { key: key, id: key, parent: this, onChildRemoveClick: this.onChildRemoveClick }));
+        newTargetDBViews.push(React.createElement(DB, { key: key, id: key, parent: this, onChildRemoveClick: this.onChildRemoveClick }));
         this.setState({
-            targetDB: newTargetDB,
+            targetDBViews: newTargetDBViews,
             autoIncrease: this.state.autoIncrease + 1
         });
     }
     onChildRemoveClick(e, child) {
-        let newTargetDB = this.state.targetDB;
-        let r = newTargetDB.find(value => {
+        let newTargetDBViews = this.state.targetDBViews;
+        let r = newTargetDBViews.find(value => {
             if (value.props.id == child.props.id) {
-                console.log(value.props.id);
                 return true;
             }
             return false;
         });
-        newTargetDB.splice(newTargetDB.indexOf(r), 1);
+        newTargetDBViews.splice(newTargetDBViews.indexOf(r), 1);
         this.setState({
-            targetDB: newTargetDB
+            targetDBViews: newTargetDBViews
         });
     }
     render() {
@@ -58,7 +57,7 @@ class DBConnection extends React.Component {
             React.createElement(
                 "div",
                 { className: "panel-body" },
-                this.state.targetDB
+                this.state.targetDBViews
             )
         );
     }

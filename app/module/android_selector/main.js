@@ -3,7 +3,7 @@ const electron = require('electron');
 const remote = electron.remote;
 const style = require("../../style");
 
-class Android extends React.Component {
+class AndroidSelector extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -12,6 +12,9 @@ class Android extends React.Component {
         };
         this.onInputFindClick = this.onInputFindClick.bind(this);
         this.onOutputFindClick = this.onOutputFindClick.bind(this);
+    }
+    static getName() {
+        return "AndroidSelector";
     }
     onInputFindClick() {
         let paths = remote.dialog.showOpenDialog({
@@ -175,4 +178,4 @@ class Android extends React.Component {
     }
 }
 
-module.exports = Android;
+module.exports = AndroidSelector;

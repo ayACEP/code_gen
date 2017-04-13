@@ -1,22 +1,38 @@
+
 const React = require("react");
 const ReactDOM = require("react-dom");
+const BaseReactComponent = require("./base_react_component");
 const fs = require("fs");
 const Nav = require("./nav");
 const Content = require("./content");
 
-class Main extends React.Component {
+class Main extends BaseReactComponent {
     constructor(props) {
         super(props);
-        this.state = {modules: []};
+        let moduleNames = fs.readdirSync("./app/module");
+        let activeModuleName = localStorage.getItem(Nav.STORAGE_ACTIVE_MODULE_NAME);
+        this.state = {
+            moduleNames: moduleNames,
+            activeModuleName: activeModuleName
+        };
+        this.onTabChange = this.onTabChange.bind(this);
     }
     componentDidMount() {
-        let modules = fs.readdirSync("./app/module");
-        this.setState({modules: modules});
+        $('a[aria-controls="' + this.state.activeModuleName + '"]').tab('show');
+        $('a[data-toggle="tab"]').on('shown.bs.tab', this.onTabChange);
+    }
+    onSaveState() {
+        localStorage.setItem(Nav.STORAGE_ACTIVE_MODULE_NAME, this.state.activeModuleName);
+    }
+    onTabChange(e) {
+        this.setState({
+            activeModuleName: $(e.target).attr("aria-controls")
+        });
     }
     render() {
         return <div className="container-fluid">
-            <Nav modules={this.state.modules} />
-            <Content modules={this.state.modules} />
+            <Nav moduleNames={this.state.moduleNames} activeModuleName={this.state.activeModuleName} />
+            <Content moduleNames={this.state.moduleNames} activeModuleName={this.state.activeModuleName} />
         </div>;
     }
 };

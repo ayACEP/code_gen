@@ -1,17 +1,32 @@
-const React = require("react");
 
-class Nav extends React.Component {
+const React = require("react");
+const BaseReactComponent = require("./base_react_component");
+const style = require("./style");
+
+class Nav extends BaseReactComponent {
+    static get STORAGE_ACTIVE_MODULE_NAME() {
+        return "Nav.state.activeModuleName";
+    }
     constructor(props) {
         super(props);
+        let modules = props.moduleNames.map(moduleName => {
+            return {
+                name: moduleName,
+                clazz: require("../app/module/" + moduleName + "/main")
+            };
+        });
+        this.state = {
+            modules: modules
+        };
     }
     render() {
         return React.createElement(
             "nav",
-            { style: { marginTop: "20px" } },
+            { style: style.marginTop },
             React.createElement(
                 "ul",
                 { className: "nav nav-tabs nav-justified" },
-                this.props.modules.map((module, i) => React.createElement(NavItem, { key: i, index: i, name: module }))
+                this.state.modules.map((module, i) => React.createElement(NavItem, { key: i, index: i, name: module.name }))
             )
         );
     }
@@ -24,7 +39,7 @@ class NavItem extends React.Component {
     render() {
         return React.createElement(
             "li",
-            { className: this.props.index == 0 ? "active" : "", role: "presentation" },
+            { role: "presentation" },
             React.createElement(
                 "a",
                 { href: "#" + this.props.name, "aria-controls": this.props.name, role: "tab", "data-toggle": "tab" },

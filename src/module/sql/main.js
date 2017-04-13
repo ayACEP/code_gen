@@ -7,6 +7,9 @@ class SQL extends React.Component {
     constructor(props) {
         super(props);
     }
+    static getName() {
+        return "SQL";
+    }
     render() {
         return <div className="row">
             <div className="col-md-5">
