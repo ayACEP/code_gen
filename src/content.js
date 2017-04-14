@@ -1,33 +1,29 @@
 
 const React = require("react");
+const BaseReactComponent = require("./base_react_component");
 const style = require("./style");
 
-class Content extends React.Component {
+class Content extends BaseReactComponent {
+
     constructor(props) {
         super(props);
-        let modules = props.moduleNames.map( (module) => {
-            return {
-                name: module,
-                clazz: require("../app/module/" + module + "/main")
-            }
-        });
-        this.state = {
-            modules: modules
-        };
     }
+
     render() {
         return <div className="tab-content">
-            {this.state.modules.map( (module, i) => 
-                <ContentItem key={i} index={i} name={module.name} moduleClass={module.clazz} />
+            {this.props.modules.map( (module, i) => 
+                <ContentItem key={i} index={i} name={module.name} moduleClass={module.class} />
             )}
         </div>;
     }
 }
 
 class ContentItem extends React.Component {
+
     constructor(props) {
         super(props);
     }
+    
     render() {
         return <div role="tabpanel" className={"tab-pane container-fluid " + (this.props.index == 0 ? "active" : "")} id={this.props.name} style={style.marginTop}>
             <this.props.moduleClass />

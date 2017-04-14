@@ -1,30 +1,39 @@
+
 const React = require("react");
-const style = require("../../style");
 const electron = require('electron');
 const remote = electron.remote;
 const shell = electron.shell;
+const BaseReactComponent = require("../../base_react_component");
+const storage = require("../../storage");
+const style = require("../../style");
+
 const pg = require('pg');
 const pgClient = new pg.Client("postgres://developer:bekind5432@localhost:5432/bekind_dev");
 
-class JPAEntityGen extends React.Component {
+class JPAEntityGen extends BaseReactComponent {
+
     constructor(props) {
         super(props);
-        this.state = {
+
+        this.setDefaultState({
             templetePath: "",
             outputDir: "",
             isGenJPAEntity: true
-        };
+        });
+
         this.onCheckboxChange = this.onCheckboxChange.bind(this);
         this.onTextChange = this.onTextChange.bind(this);
         this.onTempleteFindClick = this.onTempleteFindClick.bind(this);
         this.onTempleteEditClick = this.onTempleteEditClick.bind(this);
         this.onOutputFindClick = this.onOutputFindClick.bind(this);
     }
+
     onCheckboxChange(e) {
         this.setState({
             [e.target.name]: e.target.checked
         });
     }
+
     onTempleteFindClick() {
         let paths = remote.dialog.showOpenDialog({
             title: "select templete file", 
@@ -36,11 +45,13 @@ class JPAEntityGen extends React.Component {
             });
         }
     }
+
     onTempleteEditClick() {
         if (this.state.templetePath != "") {
             shell.openItem(this.state.templetePath);
         }
     }
+
     onOutputFindClick() {
         let paths = remote.dialog.showOpenDialog({
             title: "select output directory", 
@@ -52,11 +63,13 @@ class JPAEntityGen extends React.Component {
             });
         }
     }
+
     onTextChange(e) {
         this.setState({
             [e.target.name]: e.target.value
         });
     }
+    
     render() {
         return <div className="panel panel-default">
             <div className="panel-heading">

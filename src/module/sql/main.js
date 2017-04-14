@@ -1,15 +1,16 @@
+
 const React = require("react");
 const DBConnection = require("./db_connection");
 const JpaEntityGen = require("./jpa_entity_gen");
 const SQLEditor = require("./sql_editor");
+const BaseReactComponent = require("../../base_react_component");
 
-class SQL extends React.Component {
+class SQL extends BaseReactComponent {
+
     constructor(props) {
         super(props);
     }
-    static getName() {
-        return "SQL";
-    }
+
     render() {
         return <div className="row">
             <div className="col-md-5">
@@ -28,6 +29,10 @@ class SQL extends React.Component {
                 <SQLEditor />
             </div>
         </div>;
+    }
+    
+    static get name() {
+        return "SQL";
     }
 }
 

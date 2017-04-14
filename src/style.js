@@ -1,6 +1,6 @@
 const style = {
     panelHeadLabel: {
-        fontWeight: "100",
+        fontWeight: "100", 
         display: "initial"
     },
     marginTop: {
@@ -9,6 +9,6 @@ const style = {
     marginBottomZero: {
         marginBottom: "0px"
     }
-};
+}
 
 module.exports = style;

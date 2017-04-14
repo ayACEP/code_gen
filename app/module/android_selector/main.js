@@ -1,21 +1,29 @@
+
 const React = require("react");
 const electron = require('electron');
 const remote = electron.remote;
+const BaseReactComponent = require("../../base_react_component");
 const style = require("../../style");
 
-class AndroidSelector extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            inputDir: "",
-            outputDir: ""
-        };
-        this.onInputFindClick = this.onInputFindClick.bind(this);
-        this.onOutputFindClick = this.onOutputFindClick.bind(this);
-    }
-    static getName() {
+class AndroidSelector extends BaseReactComponent {
+
+    static get name() {
         return "AndroidSelector";
     }
+
+    constructor(props) {
+        super(props);
+
+        this.setDefaultState({
+            inputDir: "",
+            outputDir: ""
+        });
+
+        this.onInputFindClick = this.onInputFindClick.bind(this);
+        this.onOutputFindClick = this.onOutputFindClick.bind(this);
+        this.onEditTextChange = this.onEditTextChange.bind(this);
+    }
+
     onInputFindClick() {
         let paths = remote.dialog.showOpenDialog({
             title: "select templete file",
@@ -25,6 +33,7 @@ class AndroidSelector extends React.Component {
             this.setState({ inputDir: paths[0] });
         }
     }
+
     onOutputFindClick() {
         let paths = remote.dialog.showOpenDialog({
             title: "select templete file",
@@ -34,7 +43,15 @@ class AndroidSelector extends React.Component {
             this.setState({ outputDir: paths[0] });
         }
     }
+
+    onEditTextChange(e) {
+        this.setState({
+            [e.target.name]: e.target.value
+        });
+    }
+
     onExecClick() {}
+
     render() {
         return React.createElement(
             "div",
@@ -50,7 +67,7 @@ class AndroidSelector extends React.Component {
                         { className: "input-group-addon" },
                         "input"
                     ),
-                    React.createElement("input", { className: "form-control", type: "text", value: this.state.inputDir }),
+                    React.createElement("input", { name: "inputDir", className: "form-control", type: "text", value: this.state.inputDir, onChange: this.onEditTextChange }),
                     React.createElement(
                         "span",
                         { className: "input-group-btn" },
@@ -69,7 +86,7 @@ class AndroidSelector extends React.Component {
                         { className: "input-group-addon" },
                         "output"
                     ),
-                    React.createElement("input", { className: "form-control", type: "text", value: this.state.outputDir }),
+                    React.createElement("input", { name: "outputDir", className: "form-control", type: "text", value: this.state.outputDir, onChange: this.onEditTextChange }),
                     React.createElement(
                         "span",
                         { className: "input-group-btn" },
