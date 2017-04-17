@@ -7,9 +7,6 @@ const BaseReactComponent = require("../../base_react_component");
 const storage = require("../../storage");
 const style = require("../../style");
 
-const pg = require('pg');
-const pgClient = new pg.Client("postgres://developer:bekind5432@localhost:5432/bekind_dev");
-
 class JPAEntityGen extends BaseReactComponent {
 
     constructor(props) {

@@ -16,21 +16,32 @@ class SQL extends BaseReactComponent {
             <div className="col-md-5">
                 <div className="row">
                     <div className="col-md-12">
-                        <DBConnection />
+                        <DBConnection ref="dbConnection" sqlMain={this} />
                     </div>
                 </div>
                 <div className="row">
                     <div className="col-md-12">
-                        <JpaEntityGen />
+                        <JpaEntityGen ref="jpaEntityGen" sqlMain={this} />
                     </div>
                 </div>
             </div>
             <div className="col-md-7">
-                <SQLEditor />
+                <SQLEditor ref="sqlEditor" sqlMain={this} />
             </div>
         </div>;
     }
-    
+
+    componentDidMount() {
+        this.refs.sqlEditor.addOnExecClickListener(sqlContent => {
+            this.refs.dbConnection.dbRefs.forEach( (dbRef, i) => {
+                if (i != 0) {
+                    return;
+                }
+                this.refs.sqlEditor.addOnExecClickListener(dbRef.onExecClick);
+            });
+        });
+    }
+
     static get name() {
         return "SQL";
     }
