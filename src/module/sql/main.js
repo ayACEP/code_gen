@@ -32,6 +32,9 @@ class SQL extends BaseReactComponent {
     }
 
     componentDidMount() {
+        this.refs.jpaEntityGen.setState({
+            dbConnection: this.refs.dbConnection
+        });
         this.refs.dbConnection.dbRefs.forEach( (dbRef, i) => {
             this.refs.sqlEditor.addOnExecClickListener(dbRef.onExecClick);
         });
