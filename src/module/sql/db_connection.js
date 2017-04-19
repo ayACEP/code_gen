@@ -1,3 +1,4 @@
+
 const React = require("react");
 const ReactDOM = require("react-dom");
 const BaseReactComponent = require("../../base_react_component");
@@ -6,10 +7,10 @@ const pg = require('pg');
 
 class DBConnection extends BaseReactComponent {
 
-    dbRefs;
-
     constructor(props) {
         super(props);
+
+        this.dbRefs = [];
         
         this.setDefaultState({
             DBs: [],
@@ -152,9 +153,6 @@ class DB extends BaseReactComponent {
                 this.setErrorText(e.message);
             }
             pgClient.end();
-            // pgClient.query(this.props.sqlMain.refs.sqlEditor.state.sqlContent, (e, result) => {
-            //     if (e) throw e;
-            // })
         });
     }
 
@@ -170,7 +168,7 @@ class DB extends BaseReactComponent {
                 if (e) {
                     this.setErrorText(e.message);
                 } else {
-                    this.setInfoText(result.rowCount);
+                    this.setInfoText(result.rowCount + " rows changed");
                 }
                 pgClient.end();
             })

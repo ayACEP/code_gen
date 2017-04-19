@@ -13,7 +13,10 @@ class SQL extends BaseReactComponent {
 
     render() {
         return <div className="row">
-            <div className="col-md-5">
+            <div className="col-md-6">
+                <SQLEditor ref="sqlEditor" sqlMain={this} />
+            </div>
+            <div className="col-md-6">
                 <div className="row">
                     <div className="col-md-12">
                         <DBConnection ref="dbConnection" sqlMain={this} />
@@ -25,20 +28,12 @@ class SQL extends BaseReactComponent {
                     </div>
                 </div>
             </div>
-            <div className="col-md-7">
-                <SQLEditor ref="sqlEditor" sqlMain={this} />
-            </div>
         </div>;
     }
 
     componentDidMount() {
-        this.refs.sqlEditor.addOnExecClickListener(sqlContent => {
-            this.refs.dbConnection.dbRefs.forEach( (dbRef, i) => {
-                if (i != 0) {
-                    return;
-                }
-                this.refs.sqlEditor.addOnExecClickListener(dbRef.onExecClick);
-            });
+        this.refs.dbConnection.dbRefs.forEach( (dbRef, i) => {
+            this.refs.sqlEditor.addOnExecClickListener(dbRef.onExecClick);
         });
     }
 

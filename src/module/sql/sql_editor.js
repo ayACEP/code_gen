@@ -7,8 +7,6 @@ const style = require("../../style");
 
 class SQLEditor extends BaseReactComponent {
 
-    onExecClickListeners;
-
     constructor(props) {
         super(props);
         
@@ -24,9 +22,14 @@ class SQLEditor extends BaseReactComponent {
     
     render() {
         return <div>
-            <textarea className="form-control" style={{height: "400px"}} value={this.state.sqlContent} onChange={this.onSQLContentChange} />
-            <button className="btn btn-primary center-block" onClick={this.onExecClick} style={style.marginTop}>exec</button>
-        </div>;
+            <div className="form-group">
+                <p>SQLContent</p>
+                <textarea className="form-control" style={{height: "400px"}} value={this.state.sqlContent} onChange={this.onSQLContentChange} />
+            </div>
+            <div className="form-group">
+                <button className="btn btn-primary form-control" onClick={this.onExecClick}>exec</button>
+            </div>
+         </div>
     }
 
     onExecClick(e) {

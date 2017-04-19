@@ -1,8 +1,9 @@
 
 class GlobalEvent {
-    callbacks;
     constructor() {
+        
         this.callbacks = [];
+
         this.onBeforeUnload = this.onBeforeUnload.bind(this);
         this.onWindowUnload = this.onWindowUnload.bind(this);
         this.removeOnWindowUnload = this.removeOnWindowUnload.bind(this);

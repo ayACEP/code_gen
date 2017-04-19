@@ -6,13 +6,11 @@ const utils = require("./utils");
 
 class BaseReactComponent extends React.Component {
 
-    id;
-    savedState;
-
     constructor(props) {
         super(props);
         
         this.id = "";
+        this.savedState = null;
 
         this.onSaveState = this.onSaveState.bind(this);
         ge.onWindowUnload(this.onSaveState);
