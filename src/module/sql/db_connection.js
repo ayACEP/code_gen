@@ -157,6 +157,9 @@ class DB extends BaseReactComponent {
     }
 
     onExecClick(sqlContent) {
+        if (!this.state.isGen) {
+            return;
+        }
         let pgClient = new pg.Client("postgres://" + this.state.username + ":" + this.state.password + "@" + this.state.url);
         pgClient.connect( (e) => {
             if (e) {

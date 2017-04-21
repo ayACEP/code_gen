@@ -1,13 +1,11 @@
 
 const React = require("react");
-const electron = require('electron');
-const remote = electron.remote;
-const shell = electron.shell;
+const {remote, shell} = require('electron');
+const pg = require('pg');
 const BaseReactComponent = require("../../base_react_component");
 const storage = require("../../storage");
 const style = require("../../style");
-const {Class, Field, Method, Annotation, MethodParameter, AnnotationParameter, NameConverter} = require("../../java_source_gen");
-const pg = require('pg');
+const {JavaSourceGen} = require("../../java_source_gen");
 
 class JPAEntityGen extends BaseReactComponent {
 
@@ -17,6 +15,7 @@ class JPAEntityGen extends BaseReactComponent {
         this.setDefaultState({
             templetePath: "",
             outputDir: "",
+            packageName: "",
             isGenJPAEntity: true,
             dbConnection: null,
             selectedId: null
@@ -92,41 +91,39 @@ class JPAEntityGen extends BaseReactComponent {
             return null;
         });
         let pgClient = new pg.Client("postgres://" + db.state.username + ":" + db.state.password + "@" + db.state.url);
-        pgClient.connect( (e) => {
+        
+        function pgError(e, pgClient) {
             if (e) {
                 alert(e.message);
                 pgClient.end();
+                return true;
+            }
+            return false;
+        }
+
+        pgClient.connect( (e) => {
+            if (pgError(e, pgClient)) {
                 return;
             }
             pgClient.query("select table_name from information_schema.tables where table_schema = 'public'", (e, result) => {
-                if (e) {
-                    alert(e.message);
-                    pgClient.end();
+                if (pgError(e, pgClient)) {
                     return;
                 }
                 for (let i in result.rows) {
                     let tableName = result.rows[i].table_name;
-                    pgClient.query("select column_name, data_type from information_schema.columns where table_schema = 'public' and table_name = $1", [tableName], (e, result) => {
-                        if (e) {
-                            alert(e.message);
-                            pgClient.end();
+                    pgClient.query("select column_name as name, data_type as dataType from information_schema.columns where table_schema = 'public' and table_name = $1", [tableName], (e, result) => {
+                        if (pgError(e, pgClient)) {
                             return;
                         }
-                        this.genEntity(tableName, result.rows);
+                        let clazz = JavaSourceGen.genJPAEntity(this.state.packageName, tableName, result.rows);
+                        let code = clazz.toString();
+                        code.toString();
                     });
                 }
             });
         });
     }
 
-    genEntity(tableName, rows) {
-        for (let i in rows) {
-            let row = rows[i];
-            let clazz = new Class();
-            clazz.name = NameConverter.tableName2Camel(tableName);
-        }
-    }
-    
     render() {
         return <div className="panel panel-default">
             <div className="panel-heading">
@@ -136,19 +133,16 @@ class JPAEntityGen extends BaseReactComponent {
                 </label>
             </div>
             <div className="panel-body">
-                <div className="form-group">
+                <div className="input-group form-group">
+                    <span className="input-group-addon">targetDB</span>
                     <select id="dbSelect" className="form-control" onChange={this.onDBSelect} value={this.state.selectedId}>
                         {this.state.dbConnection != null ? this.state.dbConnection.dbRefs.map( (e, i) => 
                             <option key={e.state.id} value={e.state.id}>{e.state.name}</option> ) : []}
                     </select>
                 </div>
                 <div className="input-group form-group">
-                    <span className="input-group-addon">templete</span>
-                    <input className="form-control" name="templetePath" type="text" value={this.state.templetePath} onChange={this.onTextChange} />
-                    <span className="input-group-btn">
-                        <button className="btn btn-primary" onClick={this.onTempleteEditClick}>edit</button>
-                        <button className="btn btn-primary" onClick={this.onTempleteFindClick}>find</button>
-                    </span>
+                    <span className="input-group-addon">packageName</span>
+                    <input className="form-control" name="packageName" type="text" value={this.state.packageName} onChange={this.onTextChange} />
                 </div>
                 <div className="input-group form-group">
                     <span className="input-group-addon">output</span>

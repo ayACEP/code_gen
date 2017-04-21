@@ -14,17 +14,17 @@ class SQL extends BaseReactComponent {
     render() {
         return <div className="row">
             <div className="col-md-6">
-                <SQLEditor ref="sqlEditor" sqlMain={this} />
+                <div className="row">
+                    <div className="col-md-12">
+                        <JpaEntityGen ref="jpaEntityGen" sqlMain={this} />
+                        <SQLEditor ref="sqlEditor" sqlMain={this} />
+                    </div>
+                </div>
             </div>
             <div className="col-md-6">
                 <div className="row">
                     <div className="col-md-12">
                         <DBConnection ref="dbConnection" sqlMain={this} />
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col-md-12">
-                        <JpaEntityGen ref="jpaEntityGen" sqlMain={this} />
                     </div>
                 </div>
             </div>
