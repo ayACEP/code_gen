@@ -2,10 +2,12 @@
 const React = require("react");
 const {remote, shell} = require('electron');
 const pg = require('pg');
+const fs = require("fs");
 const BaseReactComponent = require("../../base_react_component");
 const storage = require("../../storage");
 const style = require("../../style");
 const {JavaSourceGen} = require("../../java_source_gen");
+const {NameConverter} = require("../../utils");
 
 class JPAEntityGen extends BaseReactComponent {
 
@@ -18,7 +20,9 @@ class JPAEntityGen extends BaseReactComponent {
             packageName: "",
             isGenJPAEntity: true,
             dbConnection: null,
-            selectedId: null
+            selectedId: null,
+            infoText: "",
+            errorText: ""
         });
 
         this.onCheckboxChange = this.onCheckboxChange.bind(this);
@@ -26,13 +30,55 @@ class JPAEntityGen extends BaseReactComponent {
         this.onTempleteFindClick = this.onTempleteFindClick.bind(this);
         this.onTempleteEditClick = this.onTempleteEditClick.bind(this);
         this.onOutputFindClick = this.onOutputFindClick.bind(this);
+        this.onOutputOpenClick = this.onOutputOpenClick.bind(this);
         this.onGenClick = this.onGenClick.bind(this);
         this.onDBSelect = this.onDBSelect.bind(this);
     }
 
-    onSaveState() {
-        delete this.state.dbConnection;
-        super.onSaveState();
+    render() {
+        return <div className="panel panel-default">
+            <div className="panel-heading">
+                <label style={style.panelHeadLabel}>
+                    <input type="checkbox" name="isGenJPAEntity" type="checkbox" onChange={this.onCheckboxChange} checked={this.state.isGenJPAEntity} />
+                    <span>&nbsp;JPAEntityGen</span>
+                </label>
+            </div>
+            <div className="panel-body">
+                <div className="input-group form-group">
+                    <span className="input-group-addon">targetDB</span>
+                    <select id="dbSelect" className="form-control" onChange={this.onDBSelect} value={this.state.selectedId}>
+                        {this.state.dbConnection != null ? this.state.dbConnection.dbRefs.map( (e, i) => 
+                            <option key={e.state.id} value={e.state.id}>{e.state.name}</option> ) : []}
+                    </select>
+                </div>
+                <div className="input-group form-group">
+                    <span className="input-group-addon">packageName</span>
+                    <input className="form-control" name="packageName" type="text" value={this.state.packageName} onChange={this.onTextChange} />
+                </div>
+                <div className="input-group form-group">
+                    <span className="input-group-addon">output</span>
+                    <input className="form-control" name="outputDir" type="text" value={this.state.outputDir} onChange={this.onTextChange} />
+                    <span className="input-group-btn">
+                        <button className="btn btn-primary" onClick={this.onOutputOpenClick}>open</button>
+                        <button className="btn btn-primary" onClick={this.onOutputFindClick}>find</button>
+                    </span>
+                </div>
+                <div>
+                    <button className="btn btn-primary form-control" onClick={this.onGenClick}>gen</button>
+                </div>
+            </div>
+            <div className="panel-footer">
+                <span className="text-danger">{this.state.errorText}</span>
+                <span className="text-success">{this.state.infoText}</span>
+            </div>
+        </div>
+    }
+
+    onSaveState(copyedState) {
+        delete copyedState.dbConnection;
+        delete copyedState.infoText;
+        delete copyedState.errorText;
+        super.onSaveState(copyedState);
     }
 
     onCheckboxChange(e) {
@@ -68,6 +114,12 @@ class JPAEntityGen extends BaseReactComponent {
             this.setState({
                 outputDir: paths[0]
             });
+        }
+    }
+
+    onOutputOpenClick() {
+        if (this.state.outputDir != "") {
+            shell.openItem(this.state.outputDir);
         }
     }
 
@@ -117,45 +169,14 @@ class JPAEntityGen extends BaseReactComponent {
                         }
                         let clazz = JavaSourceGen.genJPAEntity(this.state.packageName, tableName, result.rows);
                         let code = clazz.toString();
-                        code.toString();
+                        fs.writeFileSync('gen/' + NameConverter.name2Camel(tableName) + ".java", code);
                     });
                 }
+                this.setState({
+                    infoText: "finished!"
+                });
             });
         });
-    }
-
-    render() {
-        return <div className="panel panel-default">
-            <div className="panel-heading">
-                <label style={style.panelHeadLabel}>
-                    <input type="checkbox" name="isGenJPAEntity" type="checkbox" onChange={this.onCheckboxChange} checked={this.state.isGenJPAEntity} />
-                    <span>&nbsp;JPAEntityGen</span>
-                </label>
-            </div>
-            <div className="panel-body">
-                <div className="input-group form-group">
-                    <span className="input-group-addon">targetDB</span>
-                    <select id="dbSelect" className="form-control" onChange={this.onDBSelect} value={this.state.selectedId}>
-                        {this.state.dbConnection != null ? this.state.dbConnection.dbRefs.map( (e, i) => 
-                            <option key={e.state.id} value={e.state.id}>{e.state.name}</option> ) : []}
-                    </select>
-                </div>
-                <div className="input-group form-group">
-                    <span className="input-group-addon">packageName</span>
-                    <input className="form-control" name="packageName" type="text" value={this.state.packageName} onChange={this.onTextChange} />
-                </div>
-                <div className="input-group form-group">
-                    <span className="input-group-addon">output</span>
-                    <input className="form-control" name="outputDir" type="text" value={this.state.outputDir} onChange={this.onTextChange} />
-                    <span className="input-group-btn">
-                        <button className="btn btn-primary" onClick={this.onOutputFindClick}>find</button>
-                    </span>
-                </div>
-                <div>
-                    <button className="btn btn-primary" onClick={this.onGenClick}>gen</button>
-                </div>
-            </div>
-        </div>
     }
 }
 

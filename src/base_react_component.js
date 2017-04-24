@@ -2,7 +2,7 @@
 const React = require("react");
 const ge = require("./global_event");
 const storage = require("./storage");
-const utils = require("./utils");
+const {Utils} = require("./utils");
 
 class BaseReactComponent extends React.Component {
 
@@ -13,11 +13,12 @@ class BaseReactComponent extends React.Component {
         this.savedState = null;
 
         this.onSaveState = this.onSaveState.bind(this);
-        ge.onWindowUnload(this.onSaveState);
+
+        ge.onWindowUnload(this.onWindowUnload);
     }
 
     componentWillUnmount() {
-        ge.removeOnWindowUnload(this.onSaveState);
+        ge.removeOnWindowUnload(this.onWindowUnload);
         storage.removeItem(this.saveStateName);
     }
 
@@ -35,14 +36,18 @@ class BaseReactComponent extends React.Component {
 
     getSavedState() {
         if (this.savedState == null) {
-            this.savedState = utils.null2NewObject(JSON.parse(storage.getItem(this.saveStateName)))
+            this.savedState = Utils.null2NewObject(JSON.parse(storage.getItem(this.saveStateName)))
         }
         return this.savedState;
     }
 
-    onSaveState() {
+    onWindowUnload() {
+        onSaveState(Object.assign({}, this.state));
+    }
+
+    onSaveState(copyedState) {
         try {
-            storage.setItem(this.saveStateName, JSON.stringify(this.state));
+            storage.setItem(this.saveStateName, JSON.stringify(copyedState));
         } catch (e) {
             console.error(e);
         }

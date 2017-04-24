@@ -122,10 +122,10 @@ class DB extends BaseReactComponent {
         </div>;
     }
     
-    onSaveState() {
-        delete this.state.errorText;
-        delete this.state.infoText;
-        super.onSaveState();
+    onSaveState(copyedState) {
+        delete copyedState.errorText;
+        delete copyedState.infoText;
+        super.onSaveState(copyedState);
     }
 
     onCheckboxChange(e) {

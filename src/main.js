@@ -37,9 +37,9 @@ class Main extends BaseReactComponent {
         $('a[data-toggle="tab"]').on('shown.bs.tab', this.onTabChange);
     }
 
-    onSaveState() {
-        delete this.state.modules;
-        super.onSaveState();
+    onSaveState(copyedState) {
+        delete copyedState.modules;
+        super.onSaveState(copyedState);
     }
 
     onTabChange(e) {

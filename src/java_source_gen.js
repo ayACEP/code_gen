@@ -1,4 +1,6 @@
 
+const {NameConverter, TypeConverter} = require("./utils");
+
 class Class {
     constructor(name = "clazz", packagee = "a.b.c", extendz = null, access = "public") {
         this.name = name;
@@ -143,64 +145,6 @@ class AnnotationParameter {
     }
 }
 
-class NameConverter {
-    constructor() {
-    }
-    static name2Camel(name) {
-        let words = name.split("_");
-        return NameConverter.words2Camel(words);
-    }
-    static name2camel(name) {
-        let words = name.split("_");
-        return NameConverter.words2camel(words);
-    }
-    static words2Camel(words) {
-        let result = "";
-        for (let i in words) {
-            if (words[i].length == 0) {
-                continue;
-            }
-            let head = words[i].charAt(0).toUpperCase();
-            result += head + words[i].substr(1);
-        }
-        return result;
-    }
-    static words2camel(words) {
-        let result = "";
-        for (let i in words) {
-            if (words[i].length == 0) {
-                continue;
-            }
-            if (i == 0) {
-                let head = words[i].charAt(0).toLowerCase();
-                result += head + words[i].substr(1);
-            } else {
-                let head = words[i].charAt(0).toUpperCase();
-                result += head + words[i].substr(1);
-            }
-        }
-        return result;
-    }
-}
-
-class TypeConverter {
-    constructor() {
-    }
-    static pg2Java(pgType) {
-        switch (pgType) {
-        case "bigint":
-            return "Long";
-        case "integer":
-            return "Integer";
-        case "character varying":
-        case "text":
-            return "String";
-        case "timestamp without time zone":
-            return "Date";
-        }
-    }
-}
-
 class JavaSourceGen {
     
     static genJPAEntity(packageName, tableName, columns) {
@@ -269,4 +213,4 @@ class JavaSourceGen {
     }
 }
 
-module.exports = {Class, Field, Method, Annotation, MethodParameter, AnnotationParameter, NameConverter, TypeConverter, JavaSourceGen}
+module.exports = {Class, Field, Method, Annotation, MethodParameter, AnnotationParameter, JavaSourceGen}
