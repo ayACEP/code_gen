@@ -13,6 +13,7 @@ class BaseReactComponent extends React.Component {
         this.savedState = null;
 
         this.onSaveState = this.onSaveState.bind(this);
+        this.onWindowUnload = this.onWindowUnload.bind(this);
 
         ge.onWindowUnload(this.onWindowUnload);
     }
@@ -42,7 +43,7 @@ class BaseReactComponent extends React.Component {
     }
 
     onWindowUnload() {
-        onSaveState(Object.assign({}, this.state));
+        this.onSaveState(Object.assign({}, this.state));
     }
 
     onSaveState(copyedState) {
