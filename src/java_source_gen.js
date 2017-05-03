@@ -16,6 +16,12 @@ class Class {
         this.fields.push(field);
         return this;
     }
+    addFields(fields) {
+        fields.forEach(field => {
+            this.fields.push(field);
+        });
+        return this;
+    }
     addMethod(method) {
         this.methods.push(method);
         return this;
@@ -28,24 +34,33 @@ class Class {
         this.annotations.push(annotation);
         return this;
     }
+    setExtends(extendz) {
+        this.extends = extendz;
+        return this;
+    }
     toString() {
         let code = "package " + this.package + ";\n\n";
         for (let i in this.annotations) {
             code += this.annotations[i].toString() + "\n";
         }
-        code += this.extends != null ? "extends " + this.extends : "";
-        code += this.access + " class " + this.name + " implements ";
-        for (let i in this.implements) {
-            code += this.implements[i];
-            code += i != this.implements.length - 1 ? ", " : "";
+        code += this.access + " class " + this.name;
+        code += this.extends != null ? " extends " + this.extends : "";
+
+        if (this.implements.length != 0) {
+            code += " implements ";
+            for (let i in this.implements) {
+                code += this.implements[i];
+                code += i != this.implements.length - 1 ? ", " : "";
+            }
         }
         code += " {\n\n";
-        for (let i in this.fields) {
-            code += this.fields[i].toString() + "\n";
-        }
+        this.fields.forEach(field => {
+            code += field.toString() + "\n";
+        });
         for (let i in this.methods) {
             code += this.methods[i].toString() + "\n";
         }
+        code += "}";
         return code;
     }
 }
@@ -66,7 +81,7 @@ class Field {
         for (let i in this.annotations) {
             code += "    " + this.annotations[i].toString() + "\n";
         }
-        code += "    " + this.access + " " + this.type + " " + this.name + ";\n";
+        code += "    " + (this.access == "" ? "" : this.access + " ") + this.type + " " + this.name + ";\n";
         return code;
     }
 }
@@ -78,13 +93,22 @@ class Method {
         this.content = content;
         this.access = access;
         this.parameters = [];
+        this.annotations = [];
     }
     addParameter(parameter) {
         this.parameters.push(parameter);
         return this;
     }
+    addAnnotation(annotation) {
+        this.annotations.push(annotation);
+        return this;
+    }
     toString() {
-        let code = "    " + this.access + " " + this.returnType + " " + this.name + "(";
+        let code = "";
+        for (let i in this.annotations) {
+            code += "    " + this.annotations[i].toString() + "\n";
+        }
+        code += "    " + this.access + " " + this.returnType + " " + this.name + "(";
         for (let i in this.parameters) {
             code += this.parameters[i].toString();
             code += i != this.parameters.length - 1 ? ", " : "";
@@ -108,9 +132,13 @@ class Annotation {
     toString() {
         let code = "@" + this.name;
         code += this.parameters.length != 0 ? "(" : "";
-        for (let i in this.parameters) {
-            code += this.parameters[i].toString();
-            code += i != this.parameters.length - 1 ? ", " : "";
+        if (this.parameters.length == 1 && this.parameters[0].name == "value") {
+            code += this.parameters[0].toSimpleString();
+        } else {
+            for (let i in this.parameters) {
+                code += this.parameters[i].toString();
+                code += i != this.parameters.length - 1 ? ", " : "";
+            }
         }
         code += this.parameters.length != 0 ? ")" : "";
         return code;
@@ -143,10 +171,29 @@ class AnnotationParameter {
     toString() {
         return this.name + " = " + (this.isString ? "\"" + this.value + "\"" : this.value);
     }
+    toSimpleString() {
+        return this.value;
+    }
 }
 
 class JavaSourceGen {
     
+    static genAndroidActivity(packageName, fileName, fields) {
+        fileName = fileName.substr(0, fileName.lastIndexOf("."))
+        let fileNameCamel = NameConverter.name2Camel(fileName.substr(fileName.indexOf("_") + 1));
+        let content = 
+        "super.onCreate(savedInstanceState);\n" + 
+        "        setContentView(R.layout." + fileName + ");\n" + 
+        "        ButterKnife.bind(this);";
+        let method = new Method("onCreate", "void", content, "protected");
+        method.addAnnotation(new Annotation("Override"));
+        let clazz = new Class(fileNameCamel, packageName)
+            .setExtends("BaseActivity")
+            .addMethod(method)
+            .addFields(fields);
+        return clazz;
+    }
+
     static genJPAEntity(packageName, tableName, columns) {
 
         let entityAnn = new Annotation("Entity");
@@ -158,13 +205,13 @@ class JavaSourceGen {
             .addAnnotation(tableAnn)
             .addAnnotation(entityAnn);
         
-        JavaSourceGen.genFields(clazz, tableName, columns);
-        JavaSourceGen.genMethods(clazz, tableName, columns);
+        JavaSourceGen.genJpaEntityFields(clazz, tableName, columns);
+        JavaSourceGen.genJpaEntityMethods(clazz, tableName, columns);
 
         return clazz;
     }
     
-    static genFields(clazz, tableName, columns) {
+    static genJpaEntityFields(clazz, tableName, columns) {
         for (let i in columns) {
             let column = columns[i];
             let field = new Field(NameConverter.name2camel(column.name), TypeConverter.pg2Java(column.datatype));
@@ -201,7 +248,7 @@ class JavaSourceGen {
         }
     }
 
-    static genMethods(clazz, tableName, columns) {
+    static genJpaEntityMethods(clazz, tableName, columns) {
         for (let i in columns) {
             let column = columns[i];
             let getMethod = new Method("get" + NameConverter.name2Camel(column.name), TypeConverter.pg2Java(column.datatype), "return this." + NameConverter.name2camel(column.name) + ";");
