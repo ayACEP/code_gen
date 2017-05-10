@@ -11,6 +11,7 @@ class Class {
         this.implements = [];
         this.fields = [];
         this.methods = [];
+        this.imports = [];
     }
     addField(field) {
         this.fields.push(field);
@@ -34,12 +35,22 @@ class Class {
         this.annotations.push(annotation);
         return this;
     }
+    addImport(import_) {
+        this.imports.push(import_);
+        return this;
+    }
     setExtends(extendz) {
         this.extends = extendz;
         return this;
     }
     toString() {
         let code = "package " + this.package + ";\n\n";
+
+        for (let i in this.imports) {
+            code += this.imports[i].toString() + "\n"
+        }
+        code += "\n";
+
         for (let i in this.annotations) {
             code += this.annotations[i].toString() + "\n";
         }
@@ -62,6 +73,15 @@ class Class {
         }
         code += "}";
         return code;
+    }
+}
+
+class Import {
+    constructor(name = "") {
+        this.name = name;
+    }
+    toString() {
+        return "import " + this.name + ";";
     }
 }
 
@@ -169,7 +189,7 @@ class AnnotationParameter {
         }
     }
     toString() {
-        return this.name + " = " + (this.isString ? "\"" + this.value + "\"" : this.value);
+        return this.name + " = " + (this.isString ? '"' + this.value + '"' : this.value);
     }
     toSimpleString() {
         return this.value;
@@ -203,7 +223,9 @@ class JavaSourceGen {
         let clazz = new Class(NameConverter.name2Camel(tableName), packageName)
             .addImplement("IEntity")
             .addAnnotation(tableAnn)
-            .addAnnotation(entityAnn);
+            .addAnnotation(entityAnn)
+            .addImport(new Import("javax.persistence.*"))
+            .addImport(new Import("java.util.Date"));
         
         JavaSourceGen.genJpaEntityFields(clazz, tableName, columns);
         JavaSourceGen.genJpaEntityMethods(clazz, tableName, columns);
@@ -220,7 +242,7 @@ class JavaSourceGen {
                 let sequenceGeneratorAnn = new Annotation("SequenceGenerator")
                     .addParameter(new AnnotationParameter("name", tableName.toUpperCase() + "_ID_GENERATOR"))
                     .addParameter(new AnnotationParameter("sequenceName", "SEQ_" + tableName.toUpperCase() + "_ID"))
-                    .addParameter(new AnnotationParameter("allocationSize", 1));
+                    .addParameter(new AnnotationParameter("allocationSize", 1, false));
                 let generatedValueAnn = new Annotation("GeneratedValue")
                     .addParameter(new AnnotationParameter("strategy", "GenerationType.SEQUENCE", false))
                     .addParameter(new AnnotationParameter("generator", tableName.toUpperCase() + "_ID_GENERATOR"));
