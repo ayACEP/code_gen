@@ -20,6 +20,9 @@ class NameConverter {
         let words = name.split("_");
         return NameConverter.words2camel(words);
     }
+    static camel2Camel(camel) {
+        return camel.charAt(0).toUpperCase() + camel.slice(1, camel.length)
+    }
     static words2Camel(words) {
         let result = "";
         for (let i in words) {

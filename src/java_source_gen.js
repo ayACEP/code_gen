@@ -228,7 +228,7 @@ class JavaSourceGen {
             .addImport(new Import("java.util.Date"));
         
         JavaSourceGen.genJpaEntityFields(clazz, tableName, columns);
-        JavaSourceGen.genJpaEntityMethods(clazz, tableName, columns);
+        JavaSourceGen.genJpaEntityMethods(clazz, tableName);
 
         return clazz;
     }
@@ -249,7 +249,10 @@ class JavaSourceGen {
                 field.addAnnotation(idAnn);
                 field.addAnnotation(sequenceGeneratorAnn);
                 field.addAnnotation(generatedValueAnn);
-            } else if (column.name != "creator_id" && column.name != "modifier_id" && column.name.endsWith("id")) {
+            } else if (column.name != "creator_id" && column.name != "modifier_id" && column.name.endsWith("_id")) {
+                let nameExcludeId = column.name.substr(0, column.name.lastIndexOf("_") + 1);
+                field.type = NameConverter.name2Camel(nameExcludeId);
+                field.name = NameConverter.name2camel(nameExcludeId);
                 let joinColumnAnn = new Annotation("JoinColumn")
                     .addParameter(new AnnotationParameter("name", column.name));
                 let manyToOneAnn = new Annotation("ManyToOne")
@@ -270,12 +273,12 @@ class JavaSourceGen {
         }
     }
 
-    static genJpaEntityMethods(clazz, tableName, columns) {
-        for (let i in columns) {
-            let column = columns[i];
-            let getMethod = new Method("get" + NameConverter.name2Camel(column.name), TypeConverter.pg2Java(column.datatype), "return this." + NameConverter.name2camel(column.name) + ";");
-            let setMethod = new Method("set" + NameConverter.name2Camel(column.name), "void", "this." + NameConverter.name2camel(column.name) + " = " + NameConverter.name2camel(column.name) + ";")
-                .addParameter(new MethodParameter(NameConverter.name2camel(column.name), TypeConverter.pg2Java(column.datatype)));
+    static genJpaEntityMethods(clazz, tableName) {
+        for (let i in clazz.fields) {
+            let field = clazz.fields[i];
+            let getMethod = new Method("get" + NameConverter.camel2Camel(field.name), field.type, "return this." + field.name + ";");
+            let setMethod = new Method("set" + NameConverter.camel2Camel(field.name), "void", "this." + field.name + " = " + field.name + ";")
+                .addParameter(new MethodParameter(NameConverter.name2camel(field.name), field.type));
             clazz.addMethod(getMethod);
             clazz.addMethod(setMethod);
         }
